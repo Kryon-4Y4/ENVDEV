@@ -1,0 +1,51 @@
+"""后端 API 端 —— FastAPI 提供 /api/chat 接口（纯 API，不托管页面）。
+
+运行：
+    python -m envdev.api_gateway.server
+- API 地址：http://127.0.0.1:8000/api/chat
+- API 文档：http://127.0.0.1:8000/docs（FastAPI 自动生成）
+- 页面需另开端：python -m envdev.user_portal.webui.front（:3000）
+"""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+from envdev.core import build_system_prompt, chat
+
+app = FastAPI(title="ENVDEV ChatBot API")
+
+# CORS 跨域放行：前端端（:3000）独立部署，跨端口调本 API 需浏览器放行
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+#定义的是一个**类**——但它是种特殊的类：**数据模型**（用来描述"请求长什么样"），里面没有方法，只有字段声明：
+class ChatRequest(BaseModel):
+    """请求体：本轮消息 + 历史对话。"""
+
+    message: str
+    history: list = []  # [{"role": "user"/"assistant", "content": "..."}, ...]
+
+# @app.post("/api/chat") 是路由注册 这行叫装饰器（@ 开头），作用是给下面的函数"挂牌"： 
+# 当有人向 POST http://127.0.0.1:8000/api/chat 发请求时，就调用下面的 api_chat() 函数。
+@app.post("/api/chat")
+
+def api_chat(req: ChatRequest) -> dict:
+    """聊天接口：组装消息 → 调核心逻辑 → 返回模型回复。"""
+    """系统提示词+用户历史消息+用户最新消息"""
+    # 防御：过滤空内容消息（DeepSeek 要求 assistant 消息必须有 content，否则 400）
+    history = [m for m in req.history if m.get("content")]
+    messages = [{"role": "system", "content": build_system_prompt()}]
+    messages += history
+    messages.append({"role": "user", "content": req.message})
+    return {"reply": chat(messages)}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)

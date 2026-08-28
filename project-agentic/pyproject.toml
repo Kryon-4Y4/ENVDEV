@@ -19,6 +19,9 @@ dependencies = [
     "openai>=1.0",
     # Web UI（最简聊天界面）
     "gradio>=4.0",
+    # 前后端分离：后端 API 框架 + ASGI 服务器
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
 ]
 
 # 可选依赖组 —— 按需安装
@@ -41,9 +44,9 @@ rag = [
     # "sentence-transformers>=3.0",
 ]
 
-# 告诉 setuptools 包源码在 src/ 目录下
+# 告诉 setuptools 包源码就在当前目录（扁平布局，无 src/）
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 
 # Pytest 配置
 [tool.pytest.ini_options]
