@@ -10,12 +10,28 @@
 """
 
 import os
+import sys
 from functools import lru_cache
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 # 加载 .env → os.environ，后续 os.getenv 可直接读取
-load_dotenv()
+# 打包模式：定位配置目录后读其中的 .env（双击启动时 cwd 不可控）；开发模式：默认从 cwd 查找，行为不变
+def _config_dir() -> str:
+    """配置目录定位：默认 = 可执行文件同目录；若身处 macOS .app 包内，跳到 .app 所在目录。"""
+    base = Path(sys.executable).resolve().parent
+    # 找出 .app 包目录（如 ENVDEV.app），跳到其所在目录（目录名以 .app 结尾）
+    app_idx = next((i for i, p in enumerate(base.parts) if p.endswith(".app")), None)
+    if app_idx is not None:
+        base = Path(*base.parts[: app_idx + 1]).parent
+    return str(base)
+
+
+if getattr(sys, "frozen", False):
+    load_dotenv(os.path.join(_config_dir(), ".env"))
+else:
+    load_dotenv()
 
 
 class Settings:

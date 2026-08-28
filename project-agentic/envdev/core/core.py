@@ -1,14 +1,36 @@
-"""业务核心 —— prompt 组装 + LLM 调用（终端 / Gradio / 前后端分离三端共用）。"""
+"""业务核心 —— prompt 组装 + LLM 调用（各端共用）。"""
 
+import sys
 from pathlib import Path
 
 from openai import OpenAI
 
 from envdev.config import settings
 
-# 路径定位（基于 __file__，任意 cwd 可用）
-PROJECT_ROOT = Path(__file__).resolve().parents[2]  # 项目根 = project/（AGENT.md 所在处）
-SKILL_DIR = Path(__file__).resolve().parent / "skill"  # skill 目录
+# 打包模式（PyInstaller）：配置目录 = 可执行文件同目录（.env/AGENT.md/skill 外置）；
+# 若身处 macOS .app 包内（三层深），跳到 .app 所在目录。开发模式保持源码路径定位。
+FROZEN = getattr(sys, "frozen", False)
+
+
+def _config_dir() -> Path:
+    base = Path(sys.executable).resolve().parent
+    # 找出 .app 包目录（如 ENVDEV.app），跳到其所在目录（目录名以 .app 结尾）
+    app_idx = next((i for i, p in enumerate(base.parts) if p.endswith(".app")), None)
+    if app_idx is not None:
+        base = Path(*base.parts[: app_idx + 1]).parent
+    return base
+
+
+PROJECT_ROOT = (
+    _config_dir()
+    if FROZEN
+    else Path(__file__).resolve().parents[2]  # 项目根 = project-agentic/（AGENT.md 所在处）
+)
+SKILL_DIR = (
+    PROJECT_ROOT / "skill"  # 打包后：.app 旁的 skill/ 目录
+    if FROZEN
+    else Path(__file__).resolve().parent / "skill"
+)
 
 # DeepSeek 的 OpenAI 兼容客户端（模块级单例，三端复用）
 client = OpenAI(

@@ -2,8 +2,9 @@
 
 运行：
     python -m envdev.api_gateway.server
-- API 地址：http://127.0.0.1:8000/api/chat
-- API 文档：http://127.0.0.1:8000/docs（FastAPI 自动生成）
+- API 地址：http://127.0.0.1:8001/api/chat
+- API 文档：http://127.0.0.1:8001/docs（FastAPI 自动生成）
+- 端口用 8001：8000 被本机 Docker 的通配监听占用（手机联调需绑 0.0.0.0，与它冲突）
 - 页面需另开端：python -m envdev.user_portal.webui.front（:3000）
 """
 
@@ -34,7 +35,7 @@ class ChatRequest(BaseModel):
     history: list = []  # [{"role": "user"/"assistant", "content": "..."}, ...]
 
 # @app.post("/api/chat") 是路由注册 这行叫装饰器（@ 开头），作用是给下面的函数"挂牌"： 
-# 当有人向 POST http://127.0.0.1:8000/api/chat 发请求时，就调用下面的 api_chat() 函数。
+# 当有人向 POST http://127.0.0.1:8001/api/chat 发请求时，就调用下面的 api_chat() 函数。
 @app.post("/api/chat")
 
 def api_chat(req: ChatRequest) -> dict:
@@ -71,4 +72,6 @@ def api_chat_stream(req: ChatRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    # 0.0.0.0 = 监听所有网卡，允许局域网设备（如手机）访问；127.0.0.1 只接待本机。
+    # 端口 8001：8000 被 Docker 占用（它监听通配地址，与 0.0.0.0 绑定冲突）
+    uvicorn.run(app, host="0.0.0.0", port=8001)
