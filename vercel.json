@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd project-agentic/envdev/user_portal/webui && npm install && npm run build",
+  "outputDirectory": "project-agentic/envdev/user_portal/webui/dist",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://YOUR_RAILWAY_URL/api/:path*" }
+  ]
+}

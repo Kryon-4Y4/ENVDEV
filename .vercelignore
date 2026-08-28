@@ -1,0 +1,24 @@
+# 排除不需要部署的文件
+awesome-agentic-ai-zh/
+data/
+jupyter-notebook/
+notes/
+tests/
+project-agentic/build/
+project-agentic/dist/
+project-agentic/envdev.egg-info/
+project-agentic/envdev/admin_console/
+project-agentic/envdev/crawler/
+project-agentic/envdev/data_layer/
+project-agentic/envdev/documentation/
+project-agentic/envdev/ops_center/
+project-agentic/envdev/task_scheduler/
+project-agentic/envdev/user_portal/mobile_app/
+project-agentic/envdev/user_portal/gui/
+project-agentic/envdev/user_portal/cli/
+project-agentic/documents/
+.venv/
+.vercel-tmp/
+.env
+*.pyc
+__pycache__/

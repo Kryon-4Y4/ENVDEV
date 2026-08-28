@@ -1,0 +1,142 @@
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 40px 24px;
+  animation: fadeIn 0.5s var(--ease-out);
+}
+
+.welcome-content {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.welcome-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 184, 212, 0.05));
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: var(--radius-xl);
+  color: var(--cyan-glow);
+  margin-bottom: 24px;
+  box-shadow: var(--glow-primary);
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--star-white);
+  margin-bottom: 12px;
+}
+
+.welcome-subtitle {
+  font-size: 16px;
+  color: var(--moon-gray);
+  max-width: 400px;
+}
+
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 640px;
+  width: 100%;
+}
+
+.suggestion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+  background: var(--deep-space);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.suggestion-card:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+  background: var(--elevated);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.suggestion-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 229, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: var(--cyan-glow);
+}
+
+.suggestion-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--star-white);
+}
+
+.suggestion-prompt {
+  font-size: 13px;
+  color: var(--moon-gray);
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .welcome-screen {
+    padding: 24px 16px;
+  }
+
+  .welcome-content {
+    margin-bottom: 32px;
+  }
+
+  .welcome-logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .welcome-logo svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .welcome-title {
+    font-size: 24px;
+  }
+
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .suggestion-card {
+    flex-direction: row;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .suggestion-icon {
+    flex-shrink: 0;
+  }
+
+  .suggestion-card > .suggestion-title,
+  .suggestion-card > .suggestion-prompt {
+    display: none;
+  }
+
+  .suggestion-card::after {
+    content: attr(data-prompt);
+    font-size: 14px;
+    color: var(--moon-gray);
+  }
+}

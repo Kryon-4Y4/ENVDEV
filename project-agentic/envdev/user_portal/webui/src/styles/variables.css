@@ -1,0 +1,58 @@
+:root {
+  /* 主色 - 赛博青 */
+  --cyan-glow: #00E5FF;
+  --cyan-deep: #00B8D4;
+  --cyan-dark: #00838F;
+
+  /* 背景层次 */
+  --void-black: #0A0E17;
+  --deep-space: #111827;
+  --dark-surface: #1A2332;
+  --elevated: #243044;
+
+  /* 文字层次 */
+  --star-white: #F0F4F8;
+  --moon-gray: #94A3B8;
+  --nebula-gray: #64748B;
+
+  /* 功能色 */
+  --success-green: #10B981;
+  --error-red: #EF4444;
+  --warning-amber: #F59E0B;
+  --info-blue: #3B82F6;
+
+  /* 用户消息 */
+  --user-bubble: #1E40AF;
+  --user-bubble-hover: #1E3A8A;
+
+  /* 发光效果 */
+  --glow-primary: 0 0 20px rgba(0, 229, 255, 0.3);
+  --glow-primary-strong: 0 0 30px rgba(0, 229, 255, 0.5);
+  --glow-button: 0 0 15px rgba(0, 229, 255, 0.4);
+  --glow-input-focus: 0 0 0 2px rgba(0, 229, 255, 0.2);
+
+  /* 字体 */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+               'Microsoft YaHei', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+
+  /* 阴影 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.5);
+
+  /* 动效 */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}

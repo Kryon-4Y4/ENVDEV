@@ -31,3 +31,5 @@ Thumbs.db
 data/
 output/
 logs/
+.vercel
+.env*
