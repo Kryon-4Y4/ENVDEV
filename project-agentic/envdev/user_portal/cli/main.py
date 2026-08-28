@@ -1,7 +1,7 @@
 """ENVDEV 入口点 —— 终端多轮对话 ChatBot（CLI 交互式 REPL）。"""
 
 from envdev.config import settings
-from envdev.core import build_system_prompt, chat
+from envdev.core import build_system_prompt, chat_stream
 
 
 def main() -> None:
@@ -30,9 +30,14 @@ def main() -> None:
             break
 
         messages.append({"role": "user", "content": user_input})
-        reply = chat(messages)  # 核心调用（与 web / API 端共用）
+        # 流式输出：边收边打印（flush 不等换行立即刷出），同时拼接完整回复存历史
+        print("🤖: ", end="", flush=True)
+        reply = ""
+        for piece in chat_stream(messages):  # 核心流式调用（与 web / API 端共用）
+            print(piece, end="", flush=True)
+            reply += piece
+        print("\n")
         messages.append({"role": "assistant", "content": reply})
-        print(f"🤖: {reply}\n")
 
 
 if __name__ == "__main__":

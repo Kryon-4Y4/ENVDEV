@@ -38,3 +38,21 @@ def chat(messages: list) -> str:
         messages=messages,
     )
     return msg.choices[0].message.content
+
+
+def chat_stream(messages: list):
+    """流式调用 LLM：逐块 yield 模型生成的文本片段（打字机效果）。
+
+    关键：stream=True 后，返回值从“完整消息”变为生成器，
+    增量文本在每个 chunk.choices[0].delta.content 里。
+    调用方如需完整回复，自行拼接（历史库存完整文本）。
+    """
+    stream = client.chat.completions.create(
+        model=settings.LLM_MODEL,
+        messages=messages,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content or ""
+        if delta:
+            yield delta
