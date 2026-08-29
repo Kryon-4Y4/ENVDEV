@@ -1,92 +1,41 @@
-.chat-input-wrapper {
-  padding: 16px 24px 20px;
-  background: linear-gradient(to top, var(--void-black) 60%, transparent);
-}
-
 .chat-input-form {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  max-width: 768px;
-  margin: 0 auto;
+  gap: 8px;
   padding: 12px 16px;
-  background: var(--dark-surface);
-  border: 1px solid rgba(100, 116, 139, 0.3);
-  border-radius: var(--radius-lg);
-  transition: all var(--duration-normal) var(--ease-default);
-}
-
-.chat-input-form:focus-within {
-  border-color: var(--cyan-glow);
-  box-shadow: var(--glow-input-focus);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
 }
 
 .chat-input {
   flex: 1;
-  background: transparent;
-  color: var(--star-white);
-  font-size: 15px;
-  line-height: 1.5;
-  resize: none;
-  min-height: 24px;
-  max-height: 150px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.chat-input::placeholder {
-  color: var(--nebula-gray);
+.chat-input:focus {
+  border-color: var(--primary);
 }
 
 .chat-input:disabled {
-  opacity: 0.5;
+  background: var(--bg-secondary);
 }
 
-.send-button {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--cyan-glow), var(--cyan-deep));
-  color: var(--void-black);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-normal) var(--ease-default);
+button[type="submit"] {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.send-button:hover:not(:disabled) {
-  box-shadow: var(--glow-button);
-  transform: translateY(-1px);
+button[type="submit"]:hover:not(:disabled) {
+  background: var(--primary-hover);
 }
 
-.send-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.send-button-disabled {
-  opacity: 0.4;
-  background: var(--nebula-gray);
-}
-
-.chat-input-hint {
-  text-align: center;
-  font-size: 12px;
-  color: var(--nebula-gray);
-  margin-top: 10px;
-  max-width: 768px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-@media (max-width: 640px) {
-  .chat-input-wrapper {
-    padding: 12px 16px 16px;
-  }
-
-  .chat-input-form {
-    padding: 10px 12px;
-  }
+button[type="submit"]:disabled {
+  background: var(--border);
+  color: var(--text-secondary);
 }

@@ -3,7 +3,6 @@ import Header from './components/Header';
 import MessageBubble from './components/MessageBubble';
 import ChatInput from './components/ChatInput';
 import WelcomeScreen from './components/WelcomeScreen';
-import TypingIndicator from './components/TypingIndicator';
 import './App.css';
 
 async function streamChat(message, history, onPiece) {
@@ -35,20 +34,17 @@ async function streamChat(message, history, onPiece) {
 export default function App() {
   const [messages, setMessages] = useState([]);
   const [busy, setBusy] = useState(false);
-  const [showTyping, setShowTyping] = useState(false);
   const chatEndRef = useRef(null);
-  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, showTyping]);
+  }, [messages]);
 
   async function handleSend(text) {
     const message = text.trim();
     if (!message || busy) return;
 
     setBusy(true);
-    setShowTyping(true);
     setMessages((msgs) => [
       ...msgs,
       { role: "user", content: message },
@@ -56,7 +52,6 @@ export default function App() {
 
     try {
       let full = "";
-      setShowTyping(false);
       setMessages((msgs) => [
         ...msgs,
         { role: "assistant", content: "" },
@@ -74,14 +69,12 @@ export default function App() {
         setMessages((msgs) => msgs.slice(0, -1));
       }
     } catch (err) {
-      setShowTyping(false);
       setMessages((msgs) => [
         ...msgs,
         { role: "assistant", content: "请求失败：" + err.message },
       ]);
     } finally {
       setBusy(false);
-      setShowTyping(false);
     }
   }
 
@@ -98,12 +91,11 @@ export default function App() {
         {!hasMessages ? (
           <WelcomeScreen onSuggestionClick={handleSuggestionClick} />
         ) : (
-          <div className="chat-area" ref={chatContainerRef}>
+          <div className="chat-area">
             <div className="messages-container">
               {messages.map((m, i) => (
                 m.content ? <MessageBubble key={i} role={m.role} content={m.content} /> : null
               ))}
-              {showTyping && <TypingIndicator />}
               <div ref={chatEndRef} />
             </div>
           </div>
