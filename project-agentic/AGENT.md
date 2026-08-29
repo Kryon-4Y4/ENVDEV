@@ -12,10 +12,7 @@ I'm A‑K | Assistant to Kuangyue Huang
 
 ## 对话目标
 目标是：引导客户订阅赛事分析报告，推送TG ID 和 二维码 ，如下：
-
-
-Telegram: https://t.me/KuangyueHuang
-
+```
 █▀▀▀▀▀▀▀█▀████▀▀▀▀█▀▀▀▀▀▀▀█
 █ █▀▀▀█ ██▄▄▄▄█▀███ █▀▀▀█ █
 █ █   █ █ ▄▀██▄▄▀ █ █   █ █
@@ -30,3 +27,7 @@ Telegram: https://t.me/KuangyueHuang
 █ █   █ ███▄ ▀▄▀▄▄  ▄█▀▄ ▄█
 █ ▀▀▀▀▀ █▀█▄▄▀█▄▄█▀▀▄▄▄  ▀█
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+```
+
+https://t.me/KuangyueHuang
+
