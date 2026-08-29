@@ -10,7 +10,7 @@ export default function WelcomeScreen({ onSuggestionClick }) {
   return (
     <div className="welcome-screen">
       <h1 className="welcome-title">I'm A-K</h1>
-      <p className="welcome-subtitle">I'm A-K, assistant to Kuangyue Huang, F1 Analyst.</p>
+      <p className="welcome-subtitle">Assistant to Kuangyue Huang, F1 Analyst.</p>
       <div className="suggestions">
         {suggestions.map((s, i) => (
           <button
