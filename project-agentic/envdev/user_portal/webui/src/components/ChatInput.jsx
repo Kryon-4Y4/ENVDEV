@@ -1,9 +1,17 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
 import './ChatInput.css';
 
 export default function ChatInput({ onSend, disabled }) {
   const [input, setInput] = useState('');
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+  }, [input]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -24,6 +32,7 @@ export default function ChatInput({ onSend, disabled }) {
     <div className="chat-input-wrapper">
       <form className="chat-input-form" onSubmit={handleSubmit}>
         <textarea
+          ref={textareaRef}
           className="chat-textarea"
           value={input}
           onChange={(e) => setInput(e.target.value)}
