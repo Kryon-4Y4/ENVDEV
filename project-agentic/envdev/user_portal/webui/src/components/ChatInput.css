@@ -1,6 +1,9 @@
 .chat-input-wrapper {
   padding: 0 16px 16px;
   background: var(--bg);
+  max-width: 768px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .chat-input-form {
@@ -8,6 +11,9 @@
   border-radius: 16px;
   background: var(--bg);
   overflow: hidden;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-textarea {
@@ -40,36 +46,8 @@
 .chat-input-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 8px 10px;
-}
-
-.toolbar-left {
-  display: flex;
-  gap: 4px;
-}
-
-.toolbar-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.toolbar-icon-btn:hover:not(:disabled) {
-  background: var(--bg-secondary);
-  color: var(--text);
-}
-
-.toolbar-icon-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 
 .send-btn {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Paperclip, ArrowUp } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import './ChatInput.css';
 
 export default function ChatInput({ onSend, disabled }) {
@@ -34,14 +34,6 @@ export default function ChatInput({ onSend, disabled }) {
         />
         <div className="chat-input-divider"></div>
         <div className="chat-input-toolbar">
-          <div className="toolbar-left">
-            <button type="button" className="toolbar-icon-btn" disabled={disabled}>
-              <Plus size={18} />
-            </button>
-            <button type="button" className="toolbar-icon-btn" disabled={disabled}>
-              <Paperclip size={18} />
-            </button>
-          </div>
           <button
             type="submit"
             className="send-btn"
