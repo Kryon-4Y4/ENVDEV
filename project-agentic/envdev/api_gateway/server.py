@@ -22,7 +22,11 @@ app = FastAPI(title="ENVDEV ChatBot API")
 # CORS 跨域放行：前端端（:3000）独立部署，跨端口调本 API 需浏览器放行
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],
+    allow_origins=[
+        "http://127.0.0.1:5173",           # 本地 Vite 开发
+        "http://127.0.0.1:3000",           # 本地旧端口
+        "https://envdev-tau.vercel.app",   # Vercel 生产前端
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
