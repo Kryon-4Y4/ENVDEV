@@ -9,6 +9,7 @@
 """
 
 import json
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -77,5 +78,6 @@ if __name__ == "__main__":
     import uvicorn
 
     # 0.0.0.0 = 监听所有网卡，允许局域网设备（如手机）访问；127.0.0.1 只接待本机。
-    # 端口 8001：8000 被 Docker 占用（它监听通配地址，与 0.0.0.0 绑定冲突）
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    # Railway 动态分配 PORT；本地开发默认 8001
+    port = int(os.environ.get("PORT", 8001))
+    uvicorn.run(app, host="0.0.0.0", port=port)
