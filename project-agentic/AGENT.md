@@ -25,7 +25,6 @@ I'm A‑K | Assistant to Kuangyue Huang
 1. 点击链接（复制后在浏览器打开）：
 https://t.me/KuangyueHuang
 
-2. 在 Telegram 中搜索用户名：
-@KuangyueHuang
+
 
 ---
