@@ -18,6 +18,18 @@ from pydantic import BaseModel
 
 from envdev.core import build_system_prompt, chat, chat_stream
 
+# ChatBot 联系方式回复模板（硬编码，不在 system prompt 中）
+CONTACT_REPLY = """你可以通过以下方式联系佬K：
+
+1. 点击链接（复制后在浏览器打开）：
+https://t.me/KuangyueHuang
+
+2. 在 Telegram 搜索用户名：
+@KuangyueHuang"""
+
+# 用于检测模型是否泄露了 system prompt 的关键词
+LEAK_KEYWORDS = ["AGENT.md", "项目指引", "技能 skill.md", "内部指引", "不要复述", "参考回复格式"]
+
 app = FastAPI(title="ENVDEV ChatBot API")
 
 # CORS 跨域放行：前端端（:3000）独立部署，跨端口调本 API 需浏览器放行
@@ -42,16 +54,20 @@ class ChatRequest(BaseModel):
 # @app.post("/api/chat") 是路由注册 这行叫装饰器（@ 开头），作用是给下面的函数"挂牌"： 
 # 当有人向 POST http://127.0.0.1:8001/api/chat 发请求时，就调用下面的 api_chat() 函数。
 @app.post("/api/chat")
-
 def api_chat(req: ChatRequest) -> dict:
     """聊天接口：组装消息 → 调核心逻辑 → 返回模型回复。"""
-    """系统提示词+用户历史消息+用户最新消息"""
-    # 防御：过滤空内容消息（DeepSeek 要求 assistant 消息必须有 content，否则 400）
     history = [m for m in req.history if m.get("content")]
     messages = [{"role": "system", "content": build_system_prompt()}]
     messages += history
-    messages.append({"role": "user", "content": req.message})
-    return {"reply": chat(messages)}
+    user_msg = req.message
+    if any(kw in user_msg for kw in ["联系", "Telegram", "TG", "订阅", "报告"]):
+        user_msg = f"{user_msg}\n\n参考回复格式：\n{CONTACT_REPLY}"
+    messages.append({"role": "user", "content": user_msg})
+    reply = chat(messages)
+    # 后处理：如果模型泄露了 system prompt，返回固定回复
+    if any(kw in reply for kw in LEAK_KEYWORDS):
+        return {"reply": CONTACT_REPLY}
+    return {"reply": reply}
 
 
 # 流式端点：把模型的逐块输出通过 SSE（Server-Sent Events）持续推给前端，
@@ -59,16 +75,22 @@ def api_chat(req: ChatRequest) -> dict:
 @app.post("/api/chat/stream")
 def api_chat_stream(req: ChatRequest):
     """流式聊天接口：SSE 格式 data: {...}\n\n 逐块推送，[DONE] 表示结束。"""
-    # 防御：过滤空内容消息（同 /api/chat）
     history = [m for m in req.history if m.get("content")]
     messages = [{"role": "system", "content": build_system_prompt()}]
     messages += history
-    messages.append({"role": "user", "content": req.message})
+    user_msg = req.message
+    if any(kw in user_msg for kw in ["联系", "Telegram", "TG", "订阅", "报告"]):
+        user_msg = f"{user_msg}\n\n参考回复格式：\n{CONTACT_REPLY}"
+    messages.append({"role": "user", "content": user_msg})
 
     def generate():
-        # SSE 每条消息格式：data: <内容>\n\n（前端按 \n\n 切分）
+        full_reply = ""
         for piece in chat_stream(messages):
+            full_reply += piece
             yield f"data: {json.dumps({'content': piece}, ensure_ascii=False)}\n\n"
+        # 流式结束后检查是否泄露，若泄露则补发正确回复
+        if any(kw in full_reply for kw in LEAK_KEYWORDS):
+            yield f"data: {json.dumps({'content': '\n' + CONTACT_REPLY}, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"  # 结束信号（沿用 OpenAI 惯例）
 
     return StreamingResponse(generate(), media_type="text/event-stream")
