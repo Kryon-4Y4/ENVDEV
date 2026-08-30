@@ -26,7 +26,7 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:5173",           # 本地 Vite 开发
         "http://127.0.0.1:3000",           # 本地旧端口
-        "https://envdev-tau.vercel.app",   # Vercel 生产前端
+        "https://www.4y4.com",              # 生产前端域名
     ],
     allow_methods=["*"],
     allow_headers=["*"],
