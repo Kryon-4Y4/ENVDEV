@@ -33,3 +33,7 @@ output/
 logs/
 .vercel
 .env*
+
+# --- 参考仓库（克隆的第三方项目，不提交）---
+awesome-agentic-ai-zh/
+deepseek-harness/
