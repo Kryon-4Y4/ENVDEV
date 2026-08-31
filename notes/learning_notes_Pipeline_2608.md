@@ -19,7 +19,7 @@
 ### 1.1 工程结构（内外两层 + 微服务风格域）
 
 * 外层是**学习框架**（笔记、参考资料、实验场）
-* 内层 `project-agentic/` 是**项目框架**（可独立打包发布）。
+* 内层 `projects/project-agentic/` 是**项目框架**（可独立打包发布）。
 * 包内按“领域”划分，保留微服务风格的长期规划骨架。
 
 ```
@@ -27,14 +27,14 @@ ENVDEV/                                # 学习框架（外层）
 ├── notes/ data/ jupyter-notebook/ tests/   # 学习笔记 / 数据 / 实验 / 测试
 ├── awesome-agentic-ai-zh/             # 参考仓库（克隆）
 ├── .env / .env.example / .venv/       # 环境变量 / 模板 / 虚拟环境（均在根目录）
-└── project-agentic/                   # 项目框架（内层，可独立打包）
+└── projects/project-agentic/            # 项目框架（内层，可独立打包）
     ├── AGENT.md                       # Agent 人设（被 core 读入 system prompt）
     ├── pyproject.toml / uv.lock       # 打包配置 / 依赖锁定（where = ["."]）
     └── envdev/                        # 主代码包（包名必须小写合法）
         ├── __init__.py / __main__.py  # 包标识 / python -m envdev 入口
         ├── config.py                  # 运行时配置（settings 单例）
         ├── core/                      # 核心域：prompt 组装 + LLM 调用（被import）
-        │   ├── core.py / skill/       # PROJECT_ROOT = project-agentic
+        │   ├── core.py / skill/       # PROJECT_ROOT = projects/project-agentic
         ├── api_gateway/               # API 域：FastAPI 服务（:8001）
         ├── user_portal/               # 用户域：面向用户的各端
         │   ├── cli/main.py            #   终端 REPL（python -m envdev）
@@ -202,12 +202,7 @@ App --> SDK --> BASE(DeepSeek) --> MODEL
 通过 **OpenAI 兼容客户端**调用 DeepSeek，读入 `AGENT.md` 人设 + skill 组装 system 消息，三端（终端 / API / 前端）共用：
 
 ```python
-client = OpenAI(
-    api_key=settings.DEEPSEEK_API_KEY,
-    base_url="https://api.deepseek.com",
-)
-
-defbuild_system_prompt() -> str:
+def build_system_prompt() -> str:
 """组装 system 提示：AGENT.md 人设 + skill 技能。"""
 rules=(PROJECT_ROOT/"AGENT.md").read_text(encoding="utf-8")
 skill=(SKILL_DIR/"hello_skill"/"skill.md").read_text(encoding="utf-8")
@@ -217,7 +212,12 @@ f"【技能 skill.md】\n{skill}\n\n"
 "当用户意图匹配技能触发条件时，严格按技能指令执行。"
 )
 
-defchat(messages: list) -> str:
+client = OpenAI(
+    api_key=settings.DEEPSEEK_API_KEY,
+    base_url="https://api.deepseek.com",
+)
+
+def chat(messages: list) -> str:
 """调用 LLM 并返回模型回复。
  messages 为完整对话历史（含 system 人设），由调用方负责维护。
  """
@@ -238,7 +238,7 @@ history: list=[]# [{"role": "user"/"assistant", "content": "..."}, ...]
 # 当有人向 POST http://127.0.0.1:8000/api/chat 发请求时，就调用下面的 api_chat() 函数。
 
 @app.post("/api/chat")
-defapi_chat(req: ChatRequest) -> dict:
+def api_chat(req: ChatRequest) -> dict:
 """聊天接口：组装消息 → 调核心逻辑 → 返回模型回复。"""
 """系统提示词+用户历史消息+用户最新消息"""
 
@@ -253,7 +253,7 @@ return {"reply": chat(messages)}
 ```python
 front.py
 
-defmain() -> None:
+def main() -> None:
 """启动静态文件服务：访问 / 自动返回 static/index.html。"""
 handler=functools.partial(
 http.server.SimpleHTTPRequestHandler,directory=str(STATIC_DIR)
@@ -303,7 +303,7 @@ history.push({ role:"assistant", content:reply });
 | 终端    | 命令                                                           | 效果                               |
 | ----- | ------------------------------------------------------------ | -------------------------------- |
 | API   | `python -m envdev.api_gateway.server`                        | API 服务 :8001（文档 :8001/docs）      |
-| WebUI | `cd project-agentic/envdev/user_portal/webui && npm run dev` | React 聊天页 :5173（代理 /api → :8001） |
+| WebUI | `cd projects/project-agentic/envdev/user_portal/webui && npm run dev` | React 聊天页 :5173（代理 /api → :8001） |
 | CLI   | `python -m envdev`                                           | 终端对话，`exit` 退出                   |
 | GUI   | `python -m envdev.user_portal.gui.main`                      | 桌面窗口，直调 core，不依赖上面任何服务           |
 | App   | `cd envdev/user_portal/mobile_app && npx expo start --lan`   | 二维码，手机装 Expo Go 扫码运行（需同一 WiFi）   |
@@ -379,7 +379,7 @@ return StreamingResponse(generate(), media_type="text/event-stream")
 
 **一句话本质**：**React 是“写界面的库”（声明式），Vite 是“跑和打包的工具链”**——不是同一层的东西；React 代码（JSX）浏览器看不懂，靠 Vite 开发时实时编译、上线时打包成纯静态文件。**后端完全不动**（只认 HTTP + SSE）。
 
-**工程结构**（`project-agentic/envdev/user_portal/webui/`，前端工程住在用户域包里；打包无虞：`find_packages` 只认 `__init__.py`，node_modules 不会混入）：
+**工程结构**（`projects/project-agentic/envdev/user_portal/webui/`，前端工程住在用户域包里；打包无虞：`find_packages` 只认 `__init__.py`，node_modules 不会混入）：
 
 | 文件 | 职责 |
 |------|------|
@@ -411,7 +411,7 @@ return StreamingResponse(generate(), media_type="text/event-stream")
 **启动**（需先起后端 `api_gateway.server`）：
 
 ```bash
-cd project-agentic/envdev/user_portal/webui
+cd projects/project-agentic/envdev/user_portal/webui
 npm install                          # 首次（装依赖）
 npm run dev                          # 开发：:5173（代理 /api → :8001）
 npm run build && npm run preview     # 生产：构建后本地预览 dist/
@@ -425,7 +425,7 @@ npm run build && npm run preview     # 生产：构建后本地预览 dist/
 
 ```bash
 source .venv/bin/activate            # 必须：PyInstaller 靠 PYTHONPATH 找 editable 安装的 envdev
-cd project-agentic
+cd projects/project-agentic
 pyinstaller --name ENVDEV --windowed --collect-all envdev envdev/user_portal/gui/main.py
 ```
 
@@ -627,7 +627,7 @@ ascii_qr = output.getvalue()  # 精确的二维码字符画
 | 平台 | 部署内容 | 域名 | 状态 |
 |------|---------|------|------|
 | GitHub | 整个 ENVDEV 仓库 | [github.com/Kryon-4Y4/ENVDEV](https://github.com/Kryon-4Y4/ENVDEV) | ✅ 已推送，Git 连接已建立 |
-| Vercel | `project-agentic/envdev/user_portal/webui/` | [www.4y4.com](https://www.4y4.com) | ✅ 已上线，push 自动部署 |
+| Vercel | `projects/project-agentic/envdev/user_portal/webui/` | [www.4y4.com](https://www.4y4.com) | ✅ 已上线，push 自动部署 |
 | Railway | 整个 Python 项目 | [api.4y4.com](https://api.4y4.com) | ✅ 已上线，push 自动部署 |
 
 ### 8.3 前端 API 地址：Vercel Rewrites
@@ -637,8 +637,8 @@ ascii_qr = output.getvalue()  # 精确的二维码字符画
 ```json
 // vercel.json（放在项目根目录）
 {
-  "buildCommand": "cd project-agentic/envdev/user_portal/webui && npm install && npm run build",
-  "outputDirectory": "project-agentic/envdev/user_portal/webui/dist",
+  "buildCommand": "cd projects/project-agentic/envdev/user_portal/webui && npm install && npm run build",
+  "outputDirectory": "projects/project-agentic/envdev/user_portal/webui/dist",
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://api.4y4.com/api/:path*" }
   ]
@@ -656,7 +656,7 @@ ascii_qr = output.getvalue()  # 精确的二维码字符画
 1. ~~GitHub 创建 repo → 本地 push~~ ✅ 已完成
 2. ~~Railway 新建项目 → "Deploy from GitHub repo" → 选 `Kryon-4Y4/ENVDEV`~~ ✅ 已完成
 3. ~~配置 Railway：~~ ✅ 已完成
-   - **Root Directory**：`project-agentic`（`pyproject.toml` 所在位置）
+   - **Root Directory**：`projects/project-agentic`（`pyproject.toml` 所在位置）
    - **Start Command**：`python -m envdev.api_gateway.server`
    - **Variables**：`DEEPSEEK_API_KEY`、`LLM_MODEL`（在 Railway 面板设置）
 4. ~~Railway 自动分配域名~~ ✅ 已完成（`envdev-production.up.railway.app` → 后改为自定义域名 `api.4y4.com`）
@@ -691,7 +691,7 @@ gh repo create ENVDEV --public --source=. --push
 
 # ④ Railway 部署 ✅ 已完成
 #    在 Railway 网页面板操作：New Project → Deploy from GitHub → 选 ENVDEV
-#    设置 Root Directory = project-agentic
+#    设置 Root Directory = projects/project-agentic
 #    设置 Start Command = python -m envdev.api_gateway.server
 #    在 Variables 面板添加 DEEPSEEK_API_KEY 等环境变量
 
@@ -718,8 +718,8 @@ gh repo create ENVDEV --public --source=. --push
 awesome-agentic-ai-zh/    # 参考仓库（体积大，不需要部署）
 data/ jupyter-notebook/   # 数据 / 实验
 tests/ notes/             # 笔记 / 测试
-project-agentic/build/    # PyInstaller 打包产物（含无效 symlink）
-project-agentic/dist/     # 同上
+projects/project-agentic/build/    # PyInstaller 打包产物（含无效 symlink）
+projects/project-agentic/dist/     # 同上
 .venv/                    # 虚拟环境
 .env                      # 密钥（不能上传）
 # ...其余未来域占位目录也排除
@@ -779,3 +779,240 @@ project-agentic/dist/     # 同上
 - **`node_modules/` 不提交**：根目录 `.gitignore` 已覆盖；Railway/Vercel 构建时各自 `npm install`
 - **push 自动部署**：GitHub push → Vercel 自动重新构建前端；Railway 自动重新部署后端（Git 连接已建立）
 - **Python 版本**：Railway 需指定 Python 3.14（在 `pyproject.toml` 的 `requires-python` 已声明）
+九、从 ChatBot 到 Agentic 架构演进
+9.1 当前 ChatBot 架构（三层分离）
+┌─────────────────────────────────────────────────────────────────────┐
+│                    core.py 业务逻辑层                                │
+│  ┌──────────────────────┐  ┌──────────────────────────────────────┐ │
+│  │ Build_System_Message │  │ client=OpenAI(key,Url)               │ │
+│  │ (AGENT.md + skill)   │  │ client.chat(model, message)          │ │
+│  └──────────────────────  │ return msg.choices[0].message.content│ │
+│                             └──────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────────────┤
+│                    server_api.py 服务层                              │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ @app.post("/api/chat")                                       │   │
+│  │ def api_chat(req: ChatRequest) -> dict:                      │   │
+│  │     messages = [system(build_system_prompt())] + history     │   │
+│  │     messages.append(user(req.message))                       │   │
+│  │     return {"reply": chat(messages)}                         │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────────────────────┤
+│                    front_end.py 展现层                               │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │ chatInput    │→ │ req.history  │→ │ history += assistantReply│  │
+│  └──────────────┘  └──────────────┘  └──────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+数据流：
+用户输入 → front_end(chatInput)
+         → POST /api/chat {message, history}
+         → server_api 组装 messages = [system] + history + [user]
+         → core.py chat(messages)
+         → OpenAI client → LLM 返回
+         → server_api 返回 {"reply": "..."}
+         → front_end 渲染 + history.push(reply)
+核心循环（伪代码）：
+# ChatBot 本质：一个 while 循环
+while chatinput:
+    assistant_reply = request + history + systemPrompt
+    history += assistant_reply
+System Prompt 组成：
+system_prompt = AGENT.md(人设) + skill.md(技能)
+文件	角色	注入时机
+AGENT.md	全局人设 / 行为准则	每次对话常驻
+skill.md	具体能力 / 执行流程	按需触发才加载
+流式输出：stream=True → 生成器 → SSE → 前端逐块渲染（打字机效果）
+9.2 ChatBot 的局限
+当前架构是被动问答模式：
+用户问 → 模型答 → 结束
+局限	说明
+无工具调用	模型只能"说"，不能"做"（查数据库、调 API、执行代码）
+无规划能力	复杂任务无法拆解为多步骤执行
+无记忆持久化	对话结束即丢失，跨会话无上下文
+单轮响应	每次只回复一次，不会主动追问或迭代
+无环境感知	不知道当前时间、用户身份、外部状态
+9.3 Agentic 架构：从"问答"到"行动"
+一句话本质：ChatBot 是"你说我答"，Agent 是"你给我目标，我自己规划、执行、验证、迭代"。
+ChatBot:  用户问 → 模型答 → 结束
+Agent:    用户给目标 → 模型规划 → 调用工具 → 观察结果 → 调整计划 → 再执行 → ... → 完成
+Agent 核心循环（ReAct 模式）：
+while not task_complete:
+    # 1. 思考（Thought）
+    thought = llm.think(current_context)
+    
+    # 2. 行动（Action）
+    action = llm.decide_action(thought)  # 选择工具
+    
+    # 3. 执行（Execute）
+    result = tools[action.name](**action.args)
+    
+    # 4. 观察（Observation）
+    observation = result
+    
+    # 5. 更新上下文，继续循环
+    context.append(thought, action, observation)
+9.4 Agentic 架构的三层扩展
+在现有 ChatBot 三层基础上，Agent 需要新增：
+┌─────────────────────────────────────────────────────────────────────┐
+│                    core.py 业务逻辑层（扩展）                         │
+│                                                                      │
+│  原有：                                                               │
+│  ┌──────────────────────┐  ┌──────────────────────────────────────┐ │
+│  │ Build_System_Message │  │ client.chat(model, message)          │ │
+│  └──────────────────────  └──────────────────────────────────────┘ │
+│                                                                      │
+│  新增：                                                               │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ Agent Loop（ReAct 循环）                                      │   │
+│  │ 1. 思考：分析当前状态，决定下一步                               │   │
+│  │ 2. 选工具：从工具列表中选择合适的工具                           │   │
+│  │ 3. 执行：调用工具，获取结果                                     │   │
+│  │ 4. 观察：将结果加入上下文                                       │   │
+│  │ 5. 判断：任务完成？→ 输出最终回复；未完成 → 回到步骤1           │   │
+│  ──────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ 工具注册表（Tool Registry）                                    │   │
+│  │ - 搜索工具：web_search(query)                                 │   │
+│  │ - 代码工具：run_code(code)                                    │   │
+│  │ - 文件工具：read_file(path), write_file(path, content)        │   │
+│  │ - API 工具：call_api(endpoint, params)                        │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────────────────────┤
+│                    server_api.py 服务层（扩展）                       │
+│                                                                      │
+│  原有：/api/chat（单次问答）                                          │
+│  新增：/api/agent（Agent 任务执行）                                    │
+│  ┌──────────────────────────────────────────────────────────────   │
+│  │ @app.post("/api/agent")                                      │   │
+│  │ def api_agent(req: AgentRequest) -> dict:                    │   │
+│  │     # AgentRequest 包含：目标描述 + 可用工具列表 + 最大迭代次数  │   │
+│  │     result = agent_loop(req.goal, req.tools, req.max_steps)  │   │
+│  │     return {"reply": result, "steps": agent.trace}           │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────────────────────┤
+│                    front_end.py 展现层（扩展）                        │
+│                                                                      │
+│  原有：chatInput + history（对话气泡）                                │
+│  新增：Agent 执行过程可视化                                            │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │ 思考过程展示：                                                  │   │
+│  │  Thought: 我需要先搜索最新数据...                             │   │
+│  │ 🔧 Action: 调用 web_search("2026 F1  standings")             │   │
+│  │ 📋 Observation: 返回 10 条结果...                               │   │
+│  │ 💭 Thought: 数据已获取，现在分析...                              │   │
+│  │ ✅ Final: 输出分析报告                                          │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+─────────────────────────────────────────────────────────────────────
+9.5 ChatBot vs Agent 对比
+维度	ChatBot	Agent
+交互模式	问答（Q&A）	任务执行（Task Execution）
+响应次数	单次回复	多轮迭代（思考→行动→观察）
+工具使用	无	有（搜索、代码、API、文件等）
+规划能力	无	有（任务拆解、步骤规划）
+记忆	仅对话历史	对话历史 + 工具执行结果 + 长期记忆
+自主性	被动（等用户问）	主动（可自主决定下一步）
+错误处理	无法自我纠正	可观察结果、调整策略、重试
+适用场景	客服、咨询、闲聊	数据分析、代码生成、研究、自动化
+9.6 演进路径：从当前 ChatBot 到 Agent
+阶段 1：工具调用（Tool Use） ← 当前最接近的下一步
+# 在 core.py 中增加工具调用能力
+def chat_with_tools(messages: list, tools: list) -> str:
+    response = client.chat.completions.create(
+        model=settings.LLM_MODEL,
+        messages=messages,
+        tools=tools,  # OpenAI 兼容的工具定义
+        tool_choice="auto",
+    )
+    
+    # 如果模型选择了工具
+    if response.choices[0].message.tool_calls:
+        for tool_call in response.choices[0].message.tool_calls:
+            result = execute_tool(tool_call)
+            messages.append({"role": "tool", "content": result})
+        # 再次调用 LLM，基于工具结果生成最终回复
+        return chat(messages)
+    
+    return response.choices[0].message.content
+阶段 2：ReAct 循环（思考-行动-观察）
+def agent_loop(goal: str, tools: dict, max_steps: int = 10) -> str:
+    context = [{"role": "system", "content": AGENT_PROMPT}]
+    context.append({"role": "user", "content": goal})
+    
+    for step in range(max_steps):
+        response = client.chat.completions.create(
+            model=settings.LLM_MODEL,
+            messages=context,
+            tools=tools,
+        )
+        
+        # 模型输出最终回复（无工具调用）
+        if not response.choices[0].message.tool_calls:
+            return response.choices[0].message.content
+        
+        # 执行工具
+        for tool_call in response.choices[0].message.tool_calls:
+            result = tools[tool_call.function.name](**json.loads(tool_call.function.arguments))
+            context.append({"role": "tool", "content": result})
+    
+    return "达到最大步骤数，任务未完成。"
+阶段 3：多 Agent 协作
+┌─────────────────────────────────────────────────────────────┐
+│                      Orchestrator Agent                      │
+│  接收用户目标 → 拆解子任务 → 分配给专业 Agent → 汇总结果      │
+└──────────┬──────────────────┬──────────────────┬────────────┘
+           │                  │                  │
+    ┌──────▼──────┐   ┌──────▼──────┐   ┌──────▼──────┐
+    │ Research    │   │ Code        │   │ Analysis    │
+    │ Agent       │   │ Agent       │   │ Agent       │
+    │ (搜索/爬虫)  │   │ (写代码/调试) │   │ (数据分析)   │
+    └─────────────┘   └─────────────┘   └─────────────┘
+9.7 本项目演进建议
+基于当前 ENVDEV 架构，Agent 化的最小改动路径：
+步骤	改动	文件
+1	定义工具 Schema（OpenAI function calling 格式）	core/tools.py（新建）
+2	实现工具执行函数（搜索、代码执行等）	core/tools.py
+3	修改 chat() 支持工具调用循环	core/core.py
+4	新增 /api/agent 端点	api_gateway/server.py
+5	前端展示 Agent 思考过程	webui/src/App.jsx
+工具 Schema 示例：
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "搜索互联网获取最新信息",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "搜索关键词"}
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "run_python",
+            "description": "执行 Python 代码并返回结果",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "code": {"type": "string", "description": "Python 代码"}
+                },
+                "required": ["code"]
+            }
+        }
+    }
+]
+9.8 关键概念总结
+概念	说明
+System Prompt	模型的"人格"和"规则"，每次对话常驻
+Tool Calling	模型决定调用哪个工具 → 执行 → 结果返回模型 → 模型生成最终回复
+ReAct	Reasoning + Acting：思考→行动→观察→再思考的循环
+Agent Loop	Agent 的核心循环：直到任务完成或达到最大步骤数
+Orchestrator	多 Agent 场景中的协调者，负责拆解任务和分配
+Memory	短期（对话历史）+ 长期（向量数据库/文件）
+一句话总结：
+ChatBot = LLM + System Prompt + 对话历史Agent = LLM + System Prompt + 工具 + 循环 + 记忆
