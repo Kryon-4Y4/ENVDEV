@@ -1,0 +1,1003 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DeepSeek Harness 系统架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [
+      2600,
+      1800
+    ]
+  },
+  "components": [
+    {
+      "id": "cli",
+      "type": "frontend",
+      "label": "dsh CLI",
+      "sublabel": "lib/bin.js",
+      "pos": [
+        60,
+        60
+      ],
+      "size": [
+        130,
+        44
+      ],
+      "tag": "启动"
+    },
+    {
+      "id": "profile",
+      "type": "backend",
+      "label": "Profile Boot",
+      "sublabel": "bundle patch 层叠加",
+      "pos": [
+        60,
+        160
+      ],
+      "size": [
+        150,
+        44
+      ]
+    },
+    {
+      "id": "b-base",
+      "type": "backend",
+      "label": "dsh-base",
+      "sublabel": "宿主核心",
+      "pos": [
+        300,
+        60
+      ],
+      "size": [
+        130,
+        40
+      ]
+    },
+    {
+      "id": "b-web",
+      "type": "frontend",
+      "label": "dsh-web-app",
+      "sublabel": "浏览器面",
+      "pos": [
+        300,
+        140
+      ],
+      "size": [
+        130,
+        40
+      ]
+    },
+    {
+      "id": "b-head",
+      "type": "backend",
+      "label": "dsh-headless",
+      "sublabel": "无界面单次会话",
+      "pos": [
+        300,
+        220
+      ],
+      "size": [
+        140,
+        40
+      ]
+    },
+    {
+      "id": "b-preset",
+      "type": "backend",
+      "label": "agent-presets",
+      "sublabel": "std/code/cordis/min",
+      "pos": [
+        300,
+        300
+      ],
+      "size": [
+        150,
+        40
+      ]
+    },
+    {
+      "id": "conn",
+      "type": "frontend",
+      "label": "client-connection",
+      "sublabel": "fetch / SSE",
+      "pos": [
+        620,
+        420
+      ],
+      "size": [
+        150,
+        40
+      ],
+      "tag": "browser"
+    },
+    {
+      "id": "remotes",
+      "type": "backend",
+      "label": "api-remotes",
+      "pos": [
+        820,
+        420
+      ],
+      "size": [
+        120,
+        40
+      ]
+    },
+    {
+      "id": "shellui",
+      "type": "frontend",
+      "label": "client-runtime",
+      "sublabel": "Cordis 内核",
+      "pos": [
+        1000,
+        420
+      ],
+      "size": [
+        140,
+        40
+      ]
+    },
+    {
+      "id": "gateway",
+      "type": "backend",
+      "label": "API 网关",
+      "sublabel": "api-gateway",
+      "pos": [
+        620,
+        580
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "webserver",
+      "type": "backend",
+      "label": "Web 服务器",
+      "sublabel": "dsh-host-webserver",
+      "pos": [
+        620,
+        680
+      ],
+      "size": [
+        150,
+        44
+      ]
+    },
+    {
+      "id": "tools-reg",
+      "type": "backend",
+      "label": "工具注册表",
+      "sublabel": "dsh-tools",
+      "pos": [
+        620,
+        780
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "agent-rt",
+      "type": "backend",
+      "label": "Agent 运行时",
+      "sublabel": "dsh-agent + agent-loop",
+      "pos": [
+        620,
+        880
+      ],
+      "size": [
+        160,
+        44
+      ]
+    },
+    {
+      "id": "websearch",
+      "type": "backend",
+      "label": "Web 搜索",
+      "sublabel": "dsh-web",
+      "pos": [
+        860,
+        580
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "backend",
+      "label": "LLM 服务",
+      "sublabel": "dsh-llm",
+      "pos": [
+        860,
+        680
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "会话",
+      "sublabel": "dsh-session",
+      "pos": [
+        860,
+        780
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "sysprompt",
+      "type": "backend",
+      "label": "系统提示词",
+      "sublabel": "dsh-system-prompt",
+      "pos": [
+        860,
+        880
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "backend",
+      "label": "Skills 注册表",
+      "sublabel": "dsh-skill",
+      "pos": [
+        1080,
+        580
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "goals",
+      "type": "backend",
+      "label": "目标服务",
+      "sublabel": "dsh-goal",
+      "pos": [
+        1080,
+        680
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "subagents",
+      "type": "backend",
+      "label": "子代理注册表",
+      "sublabel": "dsh-subagent",
+      "pos": [
+        1080,
+        780
+      ],
+      "size": [
+        150,
+        44
+      ]
+    },
+    {
+      "id": "jobs",
+      "type": "backend",
+      "label": "后台任务",
+      "sublabel": "dsh-jobs-local",
+      "pos": [
+        1080,
+        880
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "commands",
+      "type": "backend",
+      "label": "命令",
+      "sublabel": "/compact /export /plan",
+      "pos": [
+        1300,
+        580
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "meter",
+      "type": "backend",
+      "label": "token-meter",
+      "sublabel": "compaction / spill",
+      "pos": [
+        1300,
+        680
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "fs",
+      "type": "security",
+      "label": "文件系统",
+      "sublabel": "dsh-fs-local",
+      "pos": [
+        1300,
+        880
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "sandbox",
+      "type": "security",
+      "label": "沙箱",
+      "sublabel": "dsh-sandbox-local",
+      "pos": [
+        1820,
+        580
+      ],
+      "size": [
+        140,
+        44
+      ],
+      "tag": "sandbox"
+    },
+    {
+      "id": "approval",
+      "type": "security",
+      "label": "用户授权",
+      "sublabel": "dsh-user-approval",
+      "pos": [
+        1820,
+        680
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "shell-exec",
+      "type": "security",
+      "label": "Shell 执行器",
+      "sublabel": "bash/pwsh-sandbox",
+      "pos": [
+        1820,
+        780
+      ],
+      "size": [
+        150,
+        44
+      ]
+    },
+    {
+      "id": "cred",
+      "type": "security",
+      "label": "凭据",
+      "sublabel": "dsh-credentials",
+      "pos": [
+        1820,
+        880
+      ],
+      "size": [
+        130,
+        44
+      ]
+    },
+    {
+      "id": "persona",
+      "type": "backend",
+      "label": "persona",
+      "sublabel": "身份与指令",
+      "pos": [
+        620,
+        1060
+      ],
+      "size": [
+        140,
+        44
+      ],
+      "tag": "agent"
+    },
+    {
+      "id": "t-bash",
+      "type": "backend",
+      "label": "tool-bash",
+      "sublabel": "tool-pwsh",
+      "pos": [
+        860,
+        1060
+      ],
+      "size": [
+        120,
+        38
+      ]
+    },
+    {
+      "id": "t-fs",
+      "type": "backend",
+      "label": "tool-fs",
+      "sublabel": "tool-fs-search",
+      "pos": [
+        860,
+        1130
+      ],
+      "size": [
+        120,
+        38
+      ]
+    },
+    {
+      "id": "t-sub",
+      "type": "messagebus",
+      "label": "tool-subagent",
+      "sublabel": "spawn",
+      "pos": [
+        860,
+        1230
+      ],
+      "size": [
+        130,
+        40
+      ]
+    },
+    {
+      "id": "t-wf",
+      "type": "messagebus",
+      "label": "tool-workflow",
+      "pos": [
+        1440,
+        1230
+      ],
+      "size": [
+        120,
+        40
+      ]
+    },
+    {
+      "id": "spawn",
+      "type": "messagebus",
+      "label": "spawn provider",
+      "sublabel": "in-process",
+      "pos": [
+        860,
+        1400
+      ],
+      "size": [
+        150,
+        44
+      ]
+    },
+    {
+      "id": "fork",
+      "type": "messagebus",
+      "label": "fork provider",
+      "sublabel": "in-process",
+      "pos": [
+        1080,
+        1400
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "wf-worker",
+      "type": "messagebus",
+      "label": "workflow worker",
+      "sublabel": "worker-thread",
+      "pos": [
+        1280,
+        1400
+      ],
+      "size": [
+        150,
+        44
+      ]
+    },
+    {
+      "id": "child",
+      "type": "messagebus",
+      "label": "子 Agent 运行",
+      "sublabel": "fresh / fork 子会话",
+      "pos": [
+        1500,
+        1400
+      ],
+      "size": [
+        160,
+        44
+      ]
+    },
+    {
+      "id": "dsapi",
+      "type": "external",
+      "label": "DeepSeek API",
+      "sublabel": "chat/messages/search",
+      "pos": [
+        2100,
+        580
+      ],
+      "size": [
+        160,
+        44
+      ]
+    },
+    {
+      "id": "pia",
+      "type": "external",
+      "label": "pi-ai 路由",
+      "sublabel": "多提供商",
+      "pos": [
+        2100,
+        680
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "os-fs",
+      "type": "external",
+      "label": "宿主文件系统",
+      "sublabel": "工作区",
+      "pos": [
+        2100,
+        780
+      ],
+      "size": [
+        140,
+        44
+      ]
+    },
+    {
+      "id": "os-shell",
+      "type": "external",
+      "label": "宿主 Shell",
+      "sublabel": "bash / pwsh",
+      "pos": [
+        2100,
+        880
+      ],
+      "size": [
+        130,
+        44
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "① 启动与 Profile 组装层",
+      "wraps": [
+        "cli",
+        "profile",
+        "b-base",
+        "b-web",
+        "b-head",
+        "b-preset"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "② 宿主平面 · 核心注册表",
+      "wraps": [
+        "gateway",
+        "webserver",
+        "tools-reg",
+        "agent-rt",
+        "llm",
+        "session",
+        "sysprompt",
+        "subagents",
+        "skills",
+        "goals",
+        "jobs",
+        "websearch",
+        "commands",
+        "meter"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "② 宿主平面 · 安全 / 边界",
+      "wraps": [
+        "sandbox",
+        "approval",
+        "shell-exec",
+        "cred",
+        "fs"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "③ Agent 平面",
+      "wraps": [
+        "persona",
+        "t-bash",
+        "t-fs",
+        "t-sub",
+        "t-wf"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "④ 委派 / 编排后端",
+      "wraps": [
+        "spawn",
+        "fork",
+        "wf-worker",
+        "child"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "⑤ Web 表面",
+      "wraps": [
+        "conn",
+        "remotes",
+        "shellui"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "⑥ 外部系统",
+      "wraps": [
+        "dsapi",
+        "pia",
+        "os-fs",
+        "os-shell"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "c-cli-profile",
+      "from": "cli",
+      "to": "profile",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-prof-base",
+      "from": "profile",
+      "to": "b-base",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-prof-web",
+      "from": "profile",
+      "to": "b-web",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-prof-head",
+      "from": "profile",
+      "to": "b-head",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-prof-preset",
+      "from": "profile",
+      "to": "b-preset",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-base-host",
+      "from": "b-base",
+      "to": "gateway",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-bweb-web",
+      "from": "b-web",
+      "to": "conn",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-preset-agent",
+      "from": "b-preset",
+      "to": "persona",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-conn-gw",
+      "from": "conn",
+      "to": "gateway",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-ws-gw",
+      "from": "webserver",
+      "to": "gateway",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c-gw-remotes",
+      "from": "gateway",
+      "to": "remotes",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-conn-ws",
+      "from": "conn",
+      "to": "webserver",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "left",
+      "via": [
+        [
+          580,
+          440
+        ],
+        [
+          580,
+          700
+        ]
+      ]
+    },
+    {
+      "id": "c-agent-llm",
+      "from": "agent-rt",
+      "to": "llm",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-agent-tools",
+      "from": "agent-rt",
+      "to": "tools-reg",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c-agent-plane",
+      "from": "agent-rt",
+      "to": "persona",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-tools-atools",
+      "from": "tools-reg",
+      "to": "t-bash",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-tools-deleg",
+      "from": "tools-reg",
+      "to": "t-sub",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-persona-atools",
+      "from": "persona",
+      "to": "t-bash",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-persona-deleg",
+      "from": "persona",
+      "to": "t-sub",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-tbash-shell",
+      "from": "t-bash",
+      "to": "shell-exec",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-tfs-fs",
+      "from": "t-fs",
+      "to": "fs",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-tsub-sub",
+      "from": "t-sub",
+      "to": "subagents",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c-twf-wf",
+      "from": "t-wf",
+      "to": "wf-worker",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-sub-spawn",
+      "from": "subagents",
+      "to": "spawn",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-sub-fork",
+      "from": "subagents",
+      "to": "fork",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-spawn-child",
+      "from": "spawn",
+      "to": "child",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-fork-child",
+      "from": "fork",
+      "to": "child",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-wf-spawn",
+      "from": "wf-worker",
+      "to": "spawn",
+      "fromSide": "left",
+      "toSide": "left"
+    },
+    {
+      "id": "c-shell-sandbox",
+      "from": "shell-exec",
+      "to": "sandbox",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c-fs-sandbox",
+      "from": "fs",
+      "to": "sandbox",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-sandbox-approval",
+      "from": "sandbox",
+      "to": "approval",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c-shell-osshell",
+      "from": "shell-exec",
+      "to": "os-shell",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-fs-osfs",
+      "from": "fs",
+      "to": "os-fs",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-llm-dsapi",
+      "from": "llm",
+      "to": "dsapi",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-llm-pia",
+      "from": "llm",
+      "to": "pia",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-websearch-dsapi",
+      "from": "websearch",
+      "to": "dsapi",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-remotes-core",
+      "from": "remotes",
+      "to": "shellui",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c-remotes-persist",
+      "from": "remotes",
+      "to": "session",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "① 启动与组装",
+      "items": [
+        "CLI 启动器 (lib/bin.js) 按 Profile 有序叠加 bundle patch",
+        "bundle: dsh-base (宿主核心) / dsh-web-app (浏览器面) / dsh-headless (无界面单次会话)",
+        "agent-presets: standard / code / cordis / minimal 四种预设"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "② 宿主核心注册表",
+      "items": [
+        "LLM (dsh-llm) + llm-retry + agent-default-model",
+        "会话 (dsh-session) + 持久化/查询/标题/投影/遥测/检查点",
+        "工具注册表 (dsh-tools) · 系统提示词 (dsh-system-prompt)",
+        "子代理注册表 (dsh-subagent) + spawn/fork provider",
+        "Skills (dsh-skill) 按 scope 分层合并 · 目标 (dsh-goal) + goal-round-driver",
+        "后台任务 (dsh-jobs-local) · Web 搜索 (dsh-web) + web-search-deepseek",
+        "命令 (dsh-commands) /compact /export /plan ...",
+        "Agent 运行时 (dsh-agent + agent-loop)",
+        "API 网关 (api-gateway → host-apiproxy) · Web 服务器 (dsh-host-webserver)",
+        "token-meter / compaction-basic / spill / tool-result-pruner"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "② 持久化 + 安全",
+      "items": [
+        "持久化: JSONL 日志 · SQLite 查询 · 附件字节 · storage-json/domain",
+        "安全: 沙箱 (dsh-sandbox-local + sandbox-policy/fs-sandbox) · 用户授权 (dsh-user-approval + permission-presets)",
+        "Shell 执行器 (bash-sandbox/pwsh-sandbox) · 文件系统 (dsh-fs-local + fs-observation-policy)",
+        "凭据 (dsh-credentials-local + settings-file)"
+      ]
+    }
+  ]
+}

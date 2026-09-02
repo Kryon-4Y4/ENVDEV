@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DeepSeek Harness 系统架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1200, 650],
+    "views": [
+      { "id": "boot", "label": "启动与组装", "focus": ["cli","profile","b-base","b-web","b-head","b-preset"], "note": "CLI → Profile 有序叠加 bundle patch → 组合 Cordis 根容器" },
+      { "id": "host", "label": "宿主平面服务", "focus": ["core-reg","agent-rt","gateway","webserver","session","guard"], "note": "进程级单例注册表 + 安全沙箱 + 持久化存储" },
+      { "id": "agent", "label": "Agent 工具与委派", "focus": ["persona","agent-tools","delegation"], "note": "每轮循环组装工具目录，persona 注入身份与指令" },
+      { "id": "web-ext", "label": "Web 表面 + 外部", "focus": ["web-surface","ext-sys"], "note": "浏览器插件 roster + Cordis 内核 + DeepSeek API + 宿主系统" }
+    ]
+  },
+  "components": [
+    { "id": "cli", "type": "frontend", "label": "dsh CLI", "sublabel": "lib/bin.js", "pos": [60, 32], "size": [130, 35], "tag": "启动" },
+    { "id": "profile", "type": "backend", "label": "Profile Boot", "sublabel": "bundle patch 层叠加", "pos": [60, 146], "size": [160, 35] },
+    { "id": "b-base", "type": "backend", "label": "dsh-base", "sublabel": "宿主核心", "pos": [310, 32], "size": [130, 28] },
+    { "id": "b-web", "type": "frontend", "label": "dsh-web-app", "sublabel": "浏览器面", "pos": [310, 82], "size": [130, 28] },
+    { "id": "b-head", "type": "backend", "label": "dsh-headless", "sublabel": "无界面单次会话", "pos": [310, 132], "size": [140, 28] },
+    { "id": "b-preset", "type": "backend", "label": "agent-presets", "sublabel": "std/code/cordis/min", "pos": [310, 182], "size": [150, 28] },
+
+    { "id": "web-surface", "type": "frontend", "label": "Web 表面", "sublabel": "fetch/SSE · UI 插件 · HMR · code-runtime", "pos": [950, 42], "size": [200, 38], "tag": "browser" },
+
+    { "id": "session", "type": "database", "label": "会话 / 持久化", "sublabel": "JSONL · SQLite · 附件 · storage-json", "pos": [60, 279], "size": [180, 38] },
+    { "id": "core-reg", "type": "backend", "label": "核心注册表", "sublabel": "LLM · 会话 · 工具 · Skills · 命令", "pos": [320, 279], "size": [240, 41], "tag": "host plane" },
+    { "id": "gateway", "type": "backend", "label": "API 网关", "sublabel": "api-gateway → host-apiproxy", "pos": [640, 279], "size": [150, 35] },
+    { "id": "webserver", "type": "backend", "label": "Web 服务器", "sublabel": "dsh-host-webserver", "pos": [640, 338], "size": [150, 35] },
+    { "id": "guard", "type": "security", "label": "安全边界", "sublabel": "沙箱 · 授权 · Shell · 凭据", "pos": [60, 341], "size": [180, 38], "tag": "sandbox" },
+    { "id": "ext-sys", "type": "external", "label": "外部系统", "sublabel": "DeepSeek API · pi-ai · FS · Shell", "pos": [880, 279], "size": [200, 41] },
+
+    { "id": "agent-rt", "type": "backend", "label": "Agent 运行时", "sublabel": "dsh-agent + agent-loop", "pos": [320, 399], "size": [200, 38], "tag": "agent plane" },
+    { "id": "persona", "type": "backend", "label": "persona", "sublabel": "身份与指令注入", "pos": [60, 481], "size": [150, 35], "tag": "agent" },
+    { "id": "agent-tools", "type": "backend", "label": "模型可调用工具", "sublabel": "bash · fs · skill · web · edit", "pos": [280, 481], "size": [240, 38] },
+    { "id": "delegation", "type": "messagebus", "label": "委派 / 编排", "sublabel": "spawn · fork · worker-thread · 子 Agent", "pos": [580, 481], "size": [220, 38] },
+
+    { "id": "meter", "type": "backend", "label": "token-meter", "sublabel": "compaction · spill · pruner", "pos": [60, 556], "size": [150, 28] },
+    { "id": "subagents-reg", "type": "backend", "label": "子代理注册表", "sublabel": "dsh-subagent + spawn/fork", "pos": [260, 556], "size": [170, 28] },
+    { "id": "commands-reg", "type": "backend", "label": "命令注册表", "sublabel": "/compact /export /plan ...", "pos": [480, 556], "size": [150, 28] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "① 启动与 Profile 组装层", "wraps": ["cli", "profile", "b-base", "b-web", "b-head", "b-preset"] },
+    { "kind": "region", "label": "② 宿主平面 · Host Plane (进程级单例注册表与服务)", "wraps": ["core-reg", "gateway", "webserver", "agent-rt", "session", "guard", "meter", "subagents-reg", "commands-reg"] },
+    { "kind": "region", "label": "③ Agent 平面 · Agent Plane (每个预设挂载一次)", "wraps": ["persona", "agent-tools", "delegation"] },
+    { "kind": "region", "label": "⑤ Web 表面 · Browser", "wraps": ["web-surface"] },
+    { "kind": "region", "label": "⑥ 外部系统", "wraps": ["ext-sys"] }
+  ],
+  "connections": [
+    { "id": "c-cli-profile", "from": "cli", "to": "profile", "label": "启动", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" },
+    { "id": "c-prof-base", "from": "profile", "to": "b-base", "label": "dsh-base", "variant": "dashed", "fromSide": "right", "toSide": "left", "labelAt": [240, 65] },
+    { "id": "c-prof-web", "from": "profile", "to": "b-web", "variant": "dashed", "fromSide": "right", "toSide": "left" },
+    { "id": "c-prof-head", "from": "profile", "to": "b-head", "variant": "dashed", "fromSide": "right", "toSide": "left" },
+    { "id": "c-prof-preset", "from": "profile", "to": "b-preset", "label": "presets", "variant": "dashed", "fromSide": "right", "toSide": "left", "labelAt": [280, 205] },
+    { "id": "c-bweb-web", "from": "b-web", "to": "web-surface", "label": "浏览器面", "variant": "dashed", "fromSide": "right", "toSide": "left" },
+    { "id": "c-web-gw", "from": "web-surface", "to": "gateway", "label": "fetch / SSE", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" },
+    { "id": "c-gw-core", "from": "gateway", "to": "core-reg", "label": "分发", "fromSide": "left", "toSide": "right" },
+    { "id": "c-ws-gw", "from": "webserver", "to": "gateway", "label": "API 分发", "fromSide": "top", "toSide": "bottom" },
+    { "id": "c-agent-core", "from": "agent-rt", "to": "core-reg", "label": "LLM 调用", "variant": "emphasis", "fromSide": "top", "toSide": "bottom" },
+    { "id": "c-agent-tools", "from": "agent-rt", "to": "agent-tools", "label": "工具目录", "fromSide": "bottom", "toSide": "top", "labelAt": [440, 456] },
+    { "id": "c-tools-guard", "from": "agent-tools", "to": "guard", "label": "沙箱执行", "variant": "security", "fromSide": "left", "toSide": "right" },
+    { "id": "c-tools-deleg", "from": "agent-tools", "to": "delegation", "label": "spawn / fork", "fromSide": "right", "toSide": "left", "labelAt": [555, 537] },
+    { "id": "c-core-session", "from": "core-reg", "to": "session", "label": "持久化", "fromSide": "left", "toSide": "right" },
+    { "id": "c-session-guard", "from": "session", "to": "guard", "label": "授权检查", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [150, 337] },
+    { "id": "c-gw-ext", "from": "gateway", "to": "ext-sys", "label": "API 调用", "fromSide": "right", "toSide": "left" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "① 启动与组装", "items": [
+      "CLI (lib/bin.js) → Profile bundle 叠加 → dsh-base/web/headless + 4 presets"
+    ]},
+    { "dot": "emerald", "title": "② 宿主核心注册表", "items": [
+      "14 项服务: LLM · 会话 · 工具 · Skills · 子代理 · 命令 · token-meter · API 网关"
+    ]},
+    { "dot": "rose", "title": "② 持久化 + 安全", "items": [
+      "JSONL/SQLite 持久化 · 沙箱 · 授权 · Shell · 凭据"
+    ]},
+    { "dot": "violet", "title": "③ Agent 工具 (16 项)", "items": [
+      "bash/fs/skill/web/edit/subagent + spawn/fork 委派"
+    ]},
+    { "dot": "amber", "title": "⑤ Web + ⑥ 外部", "items": [
+      "fetch/SSE 浏览器面 · DeepSeek API · pi-ai · 宿主 FS/Shell"
+    ]}
+  ]
+}
